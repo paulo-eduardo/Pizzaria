@@ -9,7 +9,7 @@ class SaboresItem extends Model {
   }
 
   sabores() {
-    return this.hasMany("App/Models/Sabores");
+    return this.hasMany("App/Models/Sabor");
   }
 }
 

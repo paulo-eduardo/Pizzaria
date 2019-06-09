@@ -43,6 +43,9 @@ class PedidoController {
 
     pedido.items = await Item.query()
       .where("pedido_id", pedido.id)
+      .with("produto")
+      .with("tamanho")
+      .with("sabores")
       .fetch();
 
     console.log(pedido.items);

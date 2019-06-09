@@ -9,11 +9,11 @@ class Item extends Model {
   }
 
   produto() {
-    return this.hasOne("App/Models/Produto");
+    return this.belongsTo("App/Models/Produto");
   }
 
   tamanho() {
-    return this.hasOne("App/Models/Tamanho");
+    return this.belongsTo("App/Models/Tamanho");
   }
 
   sabores() {
