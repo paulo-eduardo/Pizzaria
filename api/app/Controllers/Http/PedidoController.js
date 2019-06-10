@@ -46,9 +46,9 @@ class PedidoController {
       .with("produto")
       .with("tamanho")
       .with("sabores")
+      .with("sabores.sabor")
       .fetch();
 
-    console.log(pedido.items);
     return pedido;
   }
 

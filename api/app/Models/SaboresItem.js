@@ -4,12 +4,12 @@
 const Model = use("Model");
 
 class SaboresItem extends Model {
-  items() {
-    return this.hasMany("App/Models/Item");
+  item() {
+    return this.belongsTo("App/Models/Item");
   }
 
-  sabores() {
-    return this.hasMany("App/Models/Sabor");
+  sabor() {
+    return this.belongsTo("App/Models/Sabor");
   }
 }
 
