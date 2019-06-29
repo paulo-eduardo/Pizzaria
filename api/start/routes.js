@@ -25,9 +25,17 @@ Route.post("/authenticate", "UserController.authenticate");
 
 Route.group(() => {
   Route.resource("produtos", "ProdutoController").apiOnly();
+
   Route.resource("tamanhos", "TamanhoController").apiOnly();
   Route.get("tamanhos/produto/:produto", "TamanhoController.indexForProdutos");
+
   Route.resource("sabores", "SaborController").apiOnly();
   Route.get("sabores/produto/:produto", "SaborController.indexForProdutos");
-  Route.post("pedido", "PedidoController.pedido");
+
+  Route.post("pedido", "PedidoController.create");
+  Route.post("finalizar/pedido/:id", "PedidoController.finalizar");
+  Route.post("pedidos/completo", "PedidoController.listCompletos");
+  Route.post("pedido/enviar/:id", "PedidoController.enviarPedido");
+  Route.post("pedido/entregue/:id", "PedidoController.pedido.confirmarEntrega");
+  Route.post("pedidos/meu", "PedidoController.pedido.listMeusPedidos");
 }).middleware("auth");

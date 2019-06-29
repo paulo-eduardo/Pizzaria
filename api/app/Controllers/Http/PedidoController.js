@@ -22,7 +22,7 @@ class PedidoController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async pedido({ request, auth }) {
+  async create({ request, auth }) {
     const { produto, tamanho, sabores } = request.body;
     const user_id = auth.user.id;
 
@@ -52,79 +52,63 @@ class PedidoController {
     return pedido;
   }
 
-  /**
-   * Show a list of all pedidos.
-   * GET pedidos
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async index({ request, response, view }) {}
+  async finalizar({ params, request }) {
+    const pedido = await Pedido.findOrFail(params.id);
+    const { observacao, cep, rua, nº, bairro } = request.body;
 
-  /**
-   * Render a form to be used for creating a new pedido.
-   * GET pedidos/create
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async create({ request, response, view }) {}
+    pedido.observacao = observacao;
+    pedido.cep = cep;
+    pedido.rua = rua;
+    pedido.nº = nº;
+    pedido.bairro = bairro;
+    pedido.status = "completo";
 
-  /**
-   * Create/save a new pedido.
-   * POST pedidos
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
-  async store({ request, response }) {}
+    await pedido.save();
 
-  /**
-   * Display a single pedido.
-   * GET pedidos/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async show({ params, request, response, view }) {}
+    return pedido;
+  }
 
-  /**
-   * Render a form to update an existing pedido.
-   * GET pedidos/:id/edit
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async edit({ params, request, response, view }) {}
+  async listCompletos() {
+    const pedidos = await Pedido.query()
+      .where("status", "completo")
+      .with("items")
+      .with("produto")
+      .with("tamanho")
+      .with("sabores")
+      .with("sabores.sabor")
+      .fetch();
 
-  /**
-   * Update pedido details.
-   * PUT or PATCH pedidos/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
-  async update({ params, request, response }) {}
+    return pedidos;
+  }
 
-  /**
-   * Delete a pedido with id.
-   * DELETE pedidos/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
-  async destroy({ params, request, response }) {}
+  async enviarPedido() {
+    const pedido = await Pedido.findOrFail(params.id);
+
+    pedido.status = "enviado";
+    await pedido.save();
+    return pedido;
+  }
+
+  async confirmarEntrega() {
+    const pedido = await Pedido.findOrFail(params.id);
+
+    pedido.status = "entregue";
+    await pedido.save();
+    return pedido;
+  }
+
+  async listMeusPedidos({ auth }) {
+    const pedidos = await Pedido.query()
+      .where("user_id", auth.user.id)
+      .with("items")
+      .with("produto")
+      .with("tamanho")
+      .with("sabores")
+      .with("sabores.sabor")
+      .fetch();
+
+    return pedidos;
+  }
 }
 
 module.exports = PedidoController;
